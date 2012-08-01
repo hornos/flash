@@ -1,0 +1,63 @@
+
+<!-- all: main -->
+<project name="makefile" default="main">
+ 
+  <!-- %include build.properties -->
+  <property file="build.properties" />
+
+  <!-- unix shell -->
+  <property environment="env" />
+  <property name="FLEX_HOME" location="${env.FLEX_HOME}" />
+  <property name="STARLING_HOME" location="${env.STARLING_HOME}" />
+  <property name="HRSTATS_HOME" location="${env.HRSTATS_HOME}" />
+
+  <!-- points to our flexTasks.jar we copied to the libs folder to distribute with the project -->
+  <!--<taskdef resource="flexTasks.tasks" classpath="${basedir}/libs/flexTasks.jar"/> -->
+  <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/> 
+  
+  <!-- init: -->
+  <target name="init">
+    <delete dir="${BUILD_DIR}" />
+    <mkdir dir="${BUILD_DIR}" />
+  </target>
+
+  <!-- lib: -->
+  <!-- <target name="lib" depends="init">-->
+  <target name="lib">
+    <compc output="${LIB_DIR}/utils.swc" fork="${PARALLEL}">
+      <!--<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>-->
+      <!-- Path for .as -->
+      <include-sources dir="${LIB_DIR}/src/" includes="*" />
+    </compc>
+  </target>
+
+  <!-- main: init -->
+  <target name="main" depends="init">
+    <mxmlc file="${SRC_DIR}/Main.as" output="${BUILD_DIR}/Main.swf" fork="${PARALLEL}">
+      <!--<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>-->
+
+      <!-- options -->
+      <static-link-runtime-shared-libraries />
+
+      <!-- define -->
+      <define name="DEBUG::stats" value="true"/>
+      <define name="DEBUG::nogpu" value="false"/>
+
+      <!-- Path for .as -->
+      <source-path path-element="${FLEX_HOME}/frameworks"/>
+      <source-path path-element="${HRSTATS_HOME}/src"/>
+
+      <!-- Path for .swc -->
+      <compiler.library-path dir="${STARLING_HOME}" append="true">
+        <include name="starling/bin/" />
+      </compiler.library-path>
+
+      <compiler.library-path dir="${basedir}" append="true">
+        <include name="lib/" />
+      </compiler.library-path>
+
+      <compiler.debug>true</compiler.debug>
+    </mxmlc>
+  </target>
+
+</project>
