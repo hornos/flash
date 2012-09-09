@@ -1,3 +1,5 @@
+// http://active.tutsplus.com/tutorials/workflow/protect-your-flash-files-from-decompilers-by-using-encryption/
+
 package
 {
     import flash.display.Sprite;
